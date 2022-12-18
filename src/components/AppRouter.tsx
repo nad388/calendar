@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { privateRoutes, publicRoutes } from '../routes';
+import { privateRoutes, publicRoutes, RouteNames } from '../routes';
 
 const AppRouter = () => {
   const auth = false;
@@ -13,7 +13,11 @@ const AppRouter = () => {
           element={<route.component />}
         />
       ))}
-      <Route path={'/login'} element={<Navigate replace to='/' />} />
+      {/* <Route path={'/login'} element={<Navigate replace to='/' />} /> */}
+      <Route
+        path={RouteNames.NAVIGATE}
+        element={<Navigate replace to={RouteNames.EVENT} />}
+      />
     </Routes>
   ) : (
     <Routes>
@@ -24,7 +28,11 @@ const AppRouter = () => {
           element={<route.component />}
         />
       ))}
-      <Route path={'/'} element={<Navigate replace to='/login' />} />
+      {/* <Route path={'/'} element={<Navigate replace to='/login' />} /> */}
+      <Route
+        path={RouteNames.NAVIGATE}
+        element={<Navigate replace to={RouteNames.LOGIN} />}
+      />
     </Routes>
   );
 };

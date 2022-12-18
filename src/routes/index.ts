@@ -11,6 +11,7 @@ export interface IRoute {
 export enum RouteNames {
   LOGIN = '/login',
   EVENT = '/',
+  NAVIGATE = '*',
 }
 
 export const publicRoutes: IRoute[] = [
@@ -20,3 +21,4 @@ export const publicRoutes: IRoute[] = [
 export const privateRoutes: IRoute[] = [
   { path: RouteNames.EVENT, exact: true, component: Event },
 ];
+
