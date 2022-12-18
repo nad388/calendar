@@ -1,15 +1,16 @@
-import { Layout, Menu, MenuProps, Row } from 'antd';
+import { Layout, Menu, Row } from 'antd';
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 import { RouteNames } from '../routes';
 
 const Navbar: FC = () => {
   const navigate = useNavigate();
-  const auth = false;
+  const { isAuth } = useTypedSelector((state) => state.auth);
   return (
     <Layout.Header>
       <Row justify={'end'}>
-        {auth ? (
+        {isAuth ? (
           <>
             <div style={{ color: 'white' }}>nad388</div>
             <Menu theme='dark' mode='horizontal' selectable={false}>
