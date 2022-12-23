@@ -1,35 +1,64 @@
 import { Button, DatePicker, Form, Input, Row, Select } from 'antd';
-import React, { FC } from 'react';
+import dayjs from 'dayjs';
+import { FC, PropsWithChildren, useState } from 'react';
+import { useTypedSelector } from '../hooks/useTypedSelector';
+import { IEvent } from '../models/IEvent';
+import { IUser } from '../models/IUser';
+import { formatDate } from '../utils/date';
 import { rules } from '../utils/rules';
 
-const EventForm: FC = () => {
+interface EventFormProps {
+  guests: IUser[];
+  submit: (event: IEvent) => void;
+}
+
+const EventForm: FC<EventFormProps> = (
+  props: PropsWithChildren<EventFormProps>
+) => {
+  const [event, setEvent] = useState<IEvent>({
+    author: '',
+    date: '',
+    description: '',
+    guest: '',
+  } as IEvent);
+  const { user } = useTypedSelector((state) => state.auth);
+  const selectDate = (date: dayjs.Dayjs | null) => {
+    if (date) {
+      setEvent({ ...event, date: formatDate(date.toDate()) });
+    }
+  };
+  const submitForm = () => {
+    props.submit({ ...event, author: user.username });
+  };
   return (
-    <Form>
+    <Form onFinish={submitForm}>
       <Form.Item
         label='Event description'
         name='description'
         rules={[rules.required()]}
       >
-        <Input />
+        <Input
+          onChange={(e) => setEvent({ ...event, description: e.target.value })}
+          value={event.description}
+        />
       </Form.Item>
       <Form.Item
         label='Event date'
-        name='description'
-        rules={[rules.required()]}
+        name='date'
+        rules={[
+          rules.required(),
+          rules.isDateAfter('Нельзя создать событие в прошлом'),
+        ]}
       >
-        <DatePicker />
+        <DatePicker onChange={(date) => selectDate(date)} />
       </Form.Item>
-      <Form.Item
-        label='Event name'
-        name='description'
-        rules={[rules.required()]}
-      >
-        <Select>
-          <Select.Option value='jack'>Jack</Select.Option>
-          <Select.Option value='lucy'>Lucy</Select.Option>
-          <Select.Option value='disabled' disabled>
-            disabled
-          </Select.Option>
+      <Form.Item label='Select a guest' name='guest' rules={[rules.required()]}>
+        <Select onChange={(guest: string) => setEvent({ ...event, guest })}>
+          {props.guests.map((guest) => (
+            <Select.Option key={guest.username} value={guest.username}>
+              {guest.username}
+            </Select.Option>
+          ))}
         </Select>
       </Form.Item>
       <Row justify={'end'}>
